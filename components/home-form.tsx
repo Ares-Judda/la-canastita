@@ -16,17 +16,10 @@ const PRODUCTS = [
 
 export function HomeForm() {
     const router = useRouter();
-
-    // ---------------------------------------
-    // ESTADOS
-    // ---------------------------------------
     const [search, setSearch] = useState("");
     const [cart, setCart] = useState<any[]>([]);
     const [selectedCategory, setSelectedCategory] = useState("");
 
-    // ---------------------------------------
-    // CARGAR CARRITO DESDE LOCALSTORAGE
-    // ---------------------------------------
     useEffect(() => {
         const stored = localStorage.getItem("cart");
         if (stored) setCart(JSON.parse(stored));
@@ -37,71 +30,60 @@ export function HomeForm() {
         localStorage.setItem("cart", JSON.stringify(newCart));
     };
 
-    // ---------------------------------------
-    // MANEJO DE BUSQUEDA
-    // ---------------------------------------
     const handleSearch = () => {
         if (!search.trim()) {
             toast.warning("Escribe algo para buscar productos");
             return;
         }
-        toast.info(`Buscando "${search}" (demo)…`);
         router.push(`/search?query=${search}`);
     };
 
-    // ---------------------------------------
-    // AGREGAR AL CARRITO
-    // ---------------------------------------
     const addToCart = (product: any) => {
         const updated = [...cart, product];
         saveCart(updated);
-
         toast.success(`${product.name} agregado al carrito`);
     };
 
-    // ---------------------------------------
-    // ABRIR CARRITO
-    // ---------------------------------------
     const openCart = () => {
-        if (cart.length === 0) {
-            toast.info("Tu carrito está vacío");
-        } else {
-            router.push("/cart");
-        }
+        if (cart.length === 0) toast.info("Tu carrito está vacío");
+        else router.push("/cart");
     };
 
-    // ---------------------------------------
-    // FILTRAR PRODUCTOS
-    // ---------------------------------------
     const filteredProducts =
         search.trim() === ""
             ? PRODUCTS
             : PRODUCTS.filter((p) =>
-                p.name.toLowerCase().includes(search.toLowerCase())
-            );
+                  p.name.toLowerCase().includes(search.toLowerCase())
+              );
 
     return (
-        <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
+        <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto px-4 pb-10">
+
             {/* NAVBAR */}
-            <nav className="flex items-center justify-between bg-[#55321e] text-white p-4 rounded-xl shadow-md">
+            <nav className="flex flex-col md:flex-row items-center justify-between bg-[#55321e] text-white p-4 rounded-xl shadow-md gap-4">
+
+                {/* LOGO */}
                 <div
                     className="flex items-center gap-2 cursor-pointer"
                     onClick={() => router.push("/home")}
                 >
-                    <Store size={24} />
-                    <h1 className="font-bold text-xl">Mi Tiendita</h1>
+                    <Store size={26} />
+                    <h1 className="font-bold text-2xl md:text-xl">Mi Tiendita</h1>
                 </div>
 
                 {/* BUSCADOR */}
-                <div className="flex items-center gap-2">
+                <div className="flex w-full md:w-auto items-center gap-2">
                     <input
                         type="text"
                         placeholder="Buscar productos..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="px-3 py-2 rounded-lg text-[#55321e] placeholder-[#b46b35] bg-amber-100 focus:outline-none"
+                        className="flex-1 md:flex-none px-3 py-2 rounded-lg text-[#55321e] placeholder-[#b46b35] bg-amber-100 focus:outline-none"
                     />
-                    <Button className="bg-[#b46b35] hover:bg-[#8d5228]" onClick={handleSearch}>
+                    <Button
+                        className="bg-[#b46b35] hover:bg-[#8d5228]"
+                        onClick={handleSearch}
+                    >
                         <Search size={18} />
                     </Button>
                 </div>
@@ -112,10 +94,7 @@ export function HomeForm() {
                     onClick={openCart}
                 >
                     <ShoppingCart size={20} className="mr-2" />
-
                     Carrito
-
-                    {/* ÍCONO DEL CONTADOR */}
                     {cart.length > 0 && (
                         <span className="absolute -top-1 -right-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">
                             {cart.length}
@@ -127,28 +106,34 @@ export function HomeForm() {
             {/* BANNER */}
             <Card className="bg-white shadow-md rounded-xl overflow-hidden">
                 <CardContent className="p-0">
-                    <img src="/ofeta.png" alt="Promo" className="w-full h-48 object-cover" />
+                    <img
+                        src="/ofeta.png"
+                        alt="Promo"
+                        className="w-full h-40 sm:h-52 md:h-64 object-cover"
+                    />
                 </CardContent>
             </Card>
 
             {/* CATEGORÍAS */}
             <section>
-                <h2 className="text-xl font-bold text-content mb-2">Categorías</h2>
-                <div className="grid grid-cols-3 gap-4">
+                <h2 className="text-xl font-bold text-[#55321e] mb-2">Categorías</h2>
+
+                {/* Scroll horizontal en móvil */}
+                <div className="flex md:grid md:grid-cols-3 gap-3 overflow-x-auto pb-2">
                     {["Frutas", "Verduras", "Lácteos", "Limpieza", "Carnes", "Bebidas"].map((cat) => (
                         <div
                             key={cat}
                             onClick={() => {
                                 setSelectedCategory(cat);
-                                toast.info(`Mostrando categoría ${cat} (demo)`);
                                 router.push(`/category/${cat.toLowerCase()}`);
                             }}
-                            className={`p-4 text-center rounded-xl shadow cursor-pointer font-semibold text-[#55321e] border transition
-                ${selectedCategory === cat
-                                    ? "bg-amber-200 border-amber-400"
-                                    : "bg-white border-amber-200 hover:bg-amber-100"
+                            className={`min-w-[120px] md:min-w-0 p-4 text-center rounded-xl shadow cursor-pointer font-semibold border transition
+                                ${
+                                    selectedCategory === cat
+                                        ? "bg-amber-200 border-amber-400"
+                                        : "bg-white border-amber-200 hover:bg-amber-100"
                                 }
-              `}
+                            `}
                         >
                             {cat}
                         </div>
@@ -158,13 +143,20 @@ export function HomeForm() {
 
             {/* PRODUCTOS */}
             <section>
-                <h2 className="text-xl font-bold text-content mb-2">Productos</h2>
+                <h2 className="text-xl font-bold text-[#55321e] mb-2">Productos</h2>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                     {filteredProducts.map((p) => (
-                        <Card key={p.id} className="bg-white rounded-xl shadow hover:scale-105 transition">
+                        <Card
+                            key={p.id}
+                            className="bg-white rounded-xl shadow hover:scale-105 transition"
+                        >
                             <CardContent className="p-3 flex flex-col items-center gap-2">
-                                <img src={p.image} alt={p.name} className="w-24 h-24 object-cover rounded-md" />
+                                <img
+                                    src={p.image}
+                                    alt={p.name}
+                                    className="w-24 h-24 object-cover rounded-md"
+                                />
 
                                 <p className="font-semibold text-[#55321e]">{p.name}</p>
                                 <p className="text-sm text-gray-600">${p.price} MXN</p>

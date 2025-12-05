@@ -27,46 +27,36 @@ export default function CartPage() {
     localStorage.setItem("cart", JSON.stringify(updated));
   };
 
-  // INCREMENTAR
-  const increaseQty = (id: number) => {
-    const updated = cart.map((item) =>
-      item.id === id ? { ...item, qty: item.qty + 1 } : item
+  const increaseQty = (id: number) =>
+    updateCart(
+      cart.map((item) =>
+        item.id === id ? { ...item, qty: item.qty + 1 } : item
+      )
     );
-    updateCart(updated);
-  };
 
-  // DECREMENTAR
-  const decreaseQty = (id: number) => {
-    const updated = cart.map((item) =>
-      item.id === id ? { ...item, qty: Math.max(1, item.qty - 1) } : item
+  const decreaseQty = (id: number) =>
+    updateCart(
+      cart.map((item) =>
+        item.id === id ? { ...item, qty: Math.max(1, item.qty - 1) } : item
+      )
     );
-    updateCart(updated);
-  };
 
-  // ELIMINAR
-  const removeItem = (id: number) => {
-    const updated = cart.filter((item) => item.id !== id);
-    updateCart(updated);
-  };
+  const removeItem = (id: number) =>
+    updateCart(cart.filter((item) => item.id !== id));
 
-  // CALCULOS
-  const subtotal = cart.reduce(
-    (acc, item) => acc + item.price * item.qty,
-    0
-  );
-
+  const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
   const shipping = subtotal > 0 ? 35 : 0;
   const total = subtotal + shipping;
 
   return (
-    <div className="min-h-screen bg-[#fdf7f2] p-6 md:p-10">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
-        
+    <div className="min-h-screen bg-[#fdf7f2] p-4 sm:p-6 md:p-10">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+
         {/* LISTA DE PRODUCTOS */}
         <div className="md:col-span-2 space-y-6">
           <Card className="shadow-lg rounded-2xl bg-white">
             <CardHeader>
-              <CardTitle className="text-3xl font-bold text-[#55321e]">
+              <CardTitle className="text-2xl sm:text-3xl font-bold text-[#55321e] text-center sm:text-left">
                 🛒 Tu Carrito
               </CardTitle>
             </CardHeader>
@@ -80,13 +70,15 @@ export default function CartPage() {
                 cart.map((item) => (
                   <div
                     key={item.id}
-                    className="flex justify-between items-center p-4 bg-[#faf3eb] border border-[#ecd8c7] rounded-xl shadow"
+                    className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 bg-[#faf3eb] border border-[#ecd8c7] rounded-xl shadow"
                   >
-                    <div className="flex items-center gap-4">
+                    {/* Producto */}
+                    <div className="flex items-center gap-4 w-full sm:w-auto">
                       <img
-                        src={item.image}    // <--- FUNCIONA AHORA
-                        className="w-20 h-20 rounded-lg shadow object-cover"
+                        src={item.image}
+                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg shadow object-cover"
                       />
+
                       <div>
                         <p className="text-lg font-semibold text-[#55321e]">
                           {item.name}
@@ -98,7 +90,7 @@ export default function CartPage() {
                     </div>
 
                     {/* CONTROLES */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 self-end sm:self-auto">
                       <Button
                         variant="secondary"
                         className="bg-[#e7d3c3] hover:bg-[#d8bfae]"
@@ -134,9 +126,9 @@ export default function CartPage() {
 
         {/* RESUMEN */}
         <div>
-          <Card className="shadow-xl rounded-2xl bg-white">
+          <Card className="shadow-xl rounded-2xl bg-white sticky top-4">
             <CardHeader>
-              <CardTitle className="text-xl font-bold text-[#55321e]">
+              <CardTitle className="text-xl font-bold text-[#55321e] text-center md:text-left">
                 Resumen
               </CardTitle>
             </CardHeader>
@@ -165,7 +157,6 @@ export default function CartPage() {
             </CardContent>
           </Card>
         </div>
-
       </div>
     </div>
   );
