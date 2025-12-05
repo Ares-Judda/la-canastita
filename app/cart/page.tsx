@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
-import { CartItem } from "@/./types/cart";
+import { CartItem } from "@/types/cart";
 
 export default function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -57,8 +57,10 @@ export default function CartPage() {
   const total = subtotal + shipping;
 
   return (
-    <div className="min-h-screen bg-[#fdf7f2] p-6 md:p-10">
+    <div className="min-h-screen bg-[#fdf7f2] p-4 sm:p-6 md:p-10">
       <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+        
+        {/* LEFT: CART ITEMS */}
         <div className="md:col-span-2 space-y-6">
           <Card className="shadow-lg rounded-2xl bg-white">
             <CardHeader>
@@ -76,15 +78,16 @@ export default function CartPage() {
                 cart.map((item) => (
                   <div
                     key={item.id}
-                    className="flex justify-between items-center p-4 bg-[#faf3eb] border border-[#ecd8c7] rounded-xl shadow"
+                    className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 bg-[#faf3eb] border border-[#ecd8c7] rounded-xl shadow"
                   >
-                    <div className="flex items-center gap-4">
+                    {/* IMAGE + INFO */}
+                    <div className="flex items-center gap-4 w-full sm:w-auto">
                       <Image
                         src={item.image}
                         alt={item.name}
                         width={80}
                         height={80}
-                        className="rounded-lg shadow object-cover"
+                        className="rounded-lg shadow object-cover w-20 h-20 sm:w-24 sm:h-24"
                       />
 
                       <div>
@@ -97,7 +100,8 @@ export default function CartPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    {/* CONTROLES */}
+                    <div className="flex items-center justify-between sm:justify-center gap-3 w-full sm:w-auto">
                       <Button
                         variant="secondary"
                         className="bg-[#e7d3c3] hover:bg-[#d8bfae]"
@@ -131,6 +135,7 @@ export default function CartPage() {
           </Card>
         </div>
 
+        {/* RIGHT: SUMMARY */}
         <div>
           <Card className="shadow-xl rounded-2xl bg-white">
             <CardHeader>
@@ -163,6 +168,7 @@ export default function CartPage() {
             </CardContent>
           </Card>
         </div>
+
       </div>
     </div>
   );
