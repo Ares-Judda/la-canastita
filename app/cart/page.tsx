@@ -4,15 +4,17 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trash2 } from "lucide-react";
+import Image from "next/image";
+import { CartItem } from "@/./types/cart";
 
 export default function CartPage() {
-  const [cart, setCart] = useState<any[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
 
   // CARGAR CARRITO
   useEffect(() => {
     const stored = localStorage.getItem("cart");
     if (stored) {
-      const parsed = JSON.parse(stored).map((item: any) => ({
+      const parsed: CartItem[] = JSON.parse(stored).map((item: any) => ({
         ...item,
         price: Number(item.price),
         qty: Number(item.qty ?? 1),
@@ -22,41 +24,45 @@ export default function CartPage() {
   }, []);
 
   // GUARDAR CAMBIOS
-  const updateCart = (updated: any[]) => {
+  const updateCart = (updated: CartItem[]) => {
     setCart(updated);
     localStorage.setItem("cart", JSON.stringify(updated));
   };
 
-  const increaseQty = (id: number) =>
-    updateCart(
-      cart.map((item) =>
-        item.id === id ? { ...item, qty: item.qty + 1 } : item
-      )
+  // INCREMENTAR
+  const increaseQty = (id: number) => {
+    const updated = cart.map((item) =>
+      item.id === id ? { ...item, qty: item.qty + 1 } : item
     );
+    updateCart(updated);
+  };
 
-  const decreaseQty = (id: number) =>
-    updateCart(
-      cart.map((item) =>
-        item.id === id ? { ...item, qty: Math.max(1, item.qty - 1) } : item
-      )
+  // DECREMENTAR
+  const decreaseQty = (id: number) => {
+    const updated = cart.map((item) =>
+      item.id === id ? { ...item, qty: Math.max(1, item.qty - 1) } : item
     );
+    updateCart(updated);
+  };
 
-  const removeItem = (id: number) =>
-    updateCart(cart.filter((item) => item.id !== id));
+  // ELIMINAR
+  const removeItem = (id: number) => {
+    const updated = cart.filter((item) => item.id !== id);
+    updateCart(updated);
+  };
 
+  // CALCULOS
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
   const shipping = subtotal > 0 ? 35 : 0;
   const total = subtotal + shipping;
 
   return (
-    <div className="min-h-screen bg-[#fdf7f2] p-4 sm:p-6 md:p-10">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
-
-        {/* LISTA DE PRODUCTOS */}
+    <div className="min-h-screen bg-[#fdf7f2] p-6 md:p-10">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-6">
           <Card className="shadow-lg rounded-2xl bg-white">
             <CardHeader>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-[#55321e] text-center sm:text-left">
+              <CardTitle className="text-3xl font-bold text-[#55321e]">
                 🛒 Tu Carrito
               </CardTitle>
             </CardHeader>
@@ -70,13 +76,15 @@ export default function CartPage() {
                 cart.map((item) => (
                   <div
                     key={item.id}
-                    className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 bg-[#faf3eb] border border-[#ecd8c7] rounded-xl shadow"
+                    className="flex justify-between items-center p-4 bg-[#faf3eb] border border-[#ecd8c7] rounded-xl shadow"
                   >
-                    {/* Producto */}
-                    <div className="flex items-center gap-4 w-full sm:w-auto">
-                      <img
+                    <div className="flex items-center gap-4">
+                      <Image
                         src={item.image}
-                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg shadow object-cover"
+                        alt={item.name}
+                        width={80}
+                        height={80}
+                        className="rounded-lg shadow object-cover"
                       />
 
                       <div>
@@ -89,8 +97,7 @@ export default function CartPage() {
                       </div>
                     </div>
 
-                    {/* CONTROLES */}
-                    <div className="flex items-center gap-3 self-end sm:self-auto">
+                    <div className="flex items-center gap-3">
                       <Button
                         variant="secondary"
                         className="bg-[#e7d3c3] hover:bg-[#d8bfae]"
@@ -124,11 +131,10 @@ export default function CartPage() {
           </Card>
         </div>
 
-        {/* RESUMEN */}
         <div>
-          <Card className="shadow-xl rounded-2xl bg-white sticky top-4">
+          <Card className="shadow-xl rounded-2xl bg-white">
             <CardHeader>
-              <CardTitle className="text-xl font-bold text-[#55321e] text-center md:text-left">
+              <CardTitle className="text-xl font-bold text-[#55321e]">
                 Resumen
               </CardTitle>
             </CardHeader>
